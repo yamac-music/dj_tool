@@ -108,12 +108,19 @@ export default function App() {
     setHasStarted(false);
   };
 
+  const handleBaseAdjust = (delta: number) => {
+    setBaseBpm((prev) => {
+      const next = parseFloat((prev + delta).toFixed(1));
+      return Math.min(180, Math.max(70, next));
+    });
+  };
+
   const timerString = useMemo(() => formatTime(timeLeft), [timeLeft]);
   const progress = initialTime === 0 ? 0 : timeLeft / initialTime;
   const clampedProgress = Math.max(0, Math.min(1, progress));
   const progressWidth = `${(clampedProgress * 100).toFixed(1)}%` as `${number}%`;
-  const targetBpm = useMemo(
-    () => Math.round(baseBpm * LOOP_MODES[loopMode].factor),
+  const targetBpmDisplay = useMemo(
+    () => (baseBpm * LOOP_MODES[loopMode].factor).toFixed(1),
     [baseBpm, loopMode],
   );
   const timerIsDanger = timeLeft <= TIMER_DANGER_THRESHOLD;
@@ -233,21 +240,39 @@ export default function App() {
         </View>
 
         <View style={[styles.bpmRow, styles.weightSub]}>
-        <View style={styles.bpmColumn}>
+          <View style={styles.bpmColumn}>
             <Text style={styles.sectionLabel}>BASE BPM</Text>
             <View style={styles.bpmValueContainer}>
-              <Text style={styles.baseValue}>{baseBpm}</Text>
+              <Text style={styles.baseValue}>{baseBpm.toFixed(1)}</Text>
+            </View>
+            <View style={styles.baseAdjustRow}>
+              <TouchableOpacity
+                activeOpacity={0.85}
+                style={styles.baseAdjustButton}
+                onPress={() => handleBaseAdjust(-0.5)}
+              >
+                <Minus color="#ffffff" size={16} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.85}
+                style={styles.baseAdjustButton}
+                onPress={() => handleBaseAdjust(0.5)}
+              >
+                <Plus color="#ffffff" size={16} />
+              </TouchableOpacity>
             </View>
             <Slider
               style={styles.slider}
               minimumValue={70}
               maximumValue={180}
-              step={1}
+              step={0.5}
               minimumTrackTintColor={colors.cyan}
               maximumTrackTintColor="#1f2937"
               thumbTintColor={colors.cyan}
               value={baseBpm}
-              onValueChange={(value) => setBaseBpm(Math.round(value))}
+              onValueChange={(value) =>
+                setBaseBpm(parseFloat(value.toFixed(1)))
+              }
             />
           </View>
 
@@ -283,7 +308,7 @@ export default function App() {
           <View style={[styles.bpmColumn, styles.targetCard]}>
             <Text style={[styles.sectionLabel, styles.targetLabel]}>TARGET BPM</Text>
             <View style={[styles.bpmValueContainer, styles.targetValueContainer]}>
-              <Text style={styles.targetValue}>{targetBpm}</Text>
+              <Text style={styles.targetValue}>{targetBpmDisplay}</Text>
             </View>
             <View style={[styles.loopTag, styles.loopTagRight]}>
               <Text style={styles.loopTagText}>
@@ -477,18 +502,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     minHeight: 140,
   },
+  baseAdjustRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  baseAdjustButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.15)',
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   baseValue: {
     color: 'white',
-    fontSize: 40,
+    fontSize: 34,
+    marginTop: 24,
     fontWeight: '600',
     textAlign: 'left',
   },
   slider: {
-    width: '100%',
-    marginTop: 16,
+    width: '150%',
   },
   loopColumn: {
-    width: 120,
+    width: 80,
     justifyContent: 'space-evenly',
     paddingVertical: 4,
   },
@@ -524,7 +564,7 @@ const styles = StyleSheet.create({
   },
   targetValue: {
     color: colors.magenta,
-    fontSize: 40,
+    fontSize: 34,
     fontWeight: '600',
     textAlign: 'right',
   },
@@ -537,11 +577,11 @@ const styles = StyleSheet.create({
   },
   loopTagRight: {
     alignSelf: 'flex-end',
-    marginTop: 12,
+    marginBottom:  8,
   },
   loopTagText: {
     color: colors.magenta,
-    fontSize: 11,
-    fontWeight: '400',
+    fontSize: 10,
+    fontWeight: '200',
   },
 });
