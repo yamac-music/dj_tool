@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   weightMain: {
-    flex: 0.65,
+    flex: 0.62,
   },
   weightSub: {
     flex: 0.35,
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: 'rgba(255,255,255,0.08)',
     overflow: 'hidden',
-    marginBottom: 12,
+    marginBottom: 20,
   },
   progressFill: {
     height: '100%',
@@ -438,7 +438,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 14,
+    marginBottom: 5,
   },
   circleButton: {
     width: 56,
@@ -470,7 +470,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 999,
-    paddingVertical: 5,
+    paddingVertical: 8,
     paddingHorizontal: 12,
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.15)',
